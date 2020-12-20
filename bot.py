@@ -1,4 +1,4 @@
-import discord, json
+import discord, json, random
 from discord.ext import commands
 
 client = commands.Bot(command_prefix=">", case_insensitive=True)
@@ -8,9 +8,33 @@ client = commands.Bot(command_prefix=">", case_insensitive=True)
 async def on_ready():
 	print("Bot is ready!")
 
+#FILTER MESSAGES
+@client.event
+async def on_message(msg):
+	filtered = [line.strip() for line in open("banned_words.txt", 'r')]
+
+	for word in filtered:
+		string = msg.content
+		if word in string.lower():
+			await msg.delete()
+
+	await client.process_commands(msg)
+
+#FIX ERRORS
+@client.event
+async def on_command_error(ctx, error):
+	if isinstance(error, commands.MissingPermissions):
+		await ctx.send("You don't have the required permissions!")
+		await ctx.message.delete()
+	elif isinstance(error, commands.MissingRequiredArgument):
+		await ctx.send("You missed to fill the whole argument!")
+		await ctx.message.delete()
+	else:
+		raise error
+
 @client.command()
 async def hello(cxt):
-	await cxt.send("Hi!")
+	await cxt.send(random.choice(["Hi!", "Hello there!", "Hey!", "Nice to see you!"]))
 
 #Test if we can extract from a json file
 @client.command(aliases=["numbers"])
@@ -77,6 +101,17 @@ async def unmute(ctx,member : discord.Member):
 	muted = ctx.guild.get_role() # To get the id type \@RoleName
 	await member.remove_roles(muted)
 	await ctx.send(member.mention + " has been muted!")
+
+#EMBED FOR INFO ABOUT USER
+@client.command()
+async def show(ctx, member : discord.Member):
+	field = discord.Embed(title = member.name, description = member.mention,
+	 color = discord.Colour.red())
+	field.add_field(name = "ID", value = member.id, inline = True)
+	field.add_field(name = "Role", value = member.top_role.name, inline = True)
+	field.set_thumbnail(url = member.avatar_url)
+	field.set_footer(icon_url = ctx.author.avatar_url, text = f"- {ctx.author.name}")
+	await ctx.send(embed = field)
 
 # add token
 client.run('')
