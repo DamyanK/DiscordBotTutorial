@@ -1,7 +1,7 @@
 import discord, json, random
 from discord.ext import commands
 
-TOKEN = "Nzc4NDA2MDMyMzI1MjE0MjM4.X7RhHA.4J2HFae3wcJFCyrU0MRPicDBoK4"
+TOKEN = ""
 client = commands.Bot(command_prefix=">", case_insensitive=True)
 
 #SIGNAL READY
