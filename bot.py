@@ -1,6 +1,7 @@
 import discord, json, random
 from discord.ext import commands
 
+TOKEN = "Nzc4NDA2MDMyMzI1MjE0MjM4.X7RhHA.4J2HFae3wcJFCyrU0MRPicDBoK4"
 client = commands.Bot(command_prefix=">", case_insensitive=True)
 
 #SIGNAL READY
@@ -105,13 +106,15 @@ async def unmute(ctx,member : discord.Member):
 #EMBED FOR INFO ABOUT USER
 @client.command()
 async def show(ctx, member : discord.Member):
+	color = random.choice([discord.Colour.red(), discord.Colour.green(), discord.Colour.blue()])
 	field = discord.Embed(title = member.name, description = member.mention,
-	 color = discord.Colour.red())
+	 color = color)
 	field.add_field(name = "ID", value = member.id, inline = True)
-	field.add_field(name = "Role", value = member.top_role.name, inline = True)
+	#field.add_field(name = "Role", value = member.top_role.name, inline = True)
+	field.add_field(name = "Roles", value = [role.name for role in member.roles])
 	field.set_thumbnail(url = member.avatar_url)
 	field.set_footer(icon_url = ctx.author.avatar_url, text = f"- {ctx.author.name}")
 	await ctx.send(embed = field)
 
 # add token
-client.run('')
+client.run(TOKEN)
