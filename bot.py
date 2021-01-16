@@ -4,6 +4,9 @@ from discord.ext import commands
 TOKEN = ""
 client = commands.Bot(command_prefix=">", case_insensitive=True)
 
+muted_id = 789984157408428044
+bot_channel = client.get_channel(795245143808540683)
+
 #SIGNAL READY
 @client.event
 async def on_ready():
@@ -34,8 +37,8 @@ async def on_command_error(ctx, error):
 		raise error
 
 @client.command()
-async def hello(cxt):
-	await cxt.send(random.choice(["Hi!", "Hello there!", "Hey!", "Nice to see you!"]))
+async def hello(ctx):
+	await ctx.send(random.choice(["Hi!", "Hello there!", "Hey!", "Nice to see you!"]))
 
 #Test if we can extract from a json file
 @client.command(aliases=["numbers"])
@@ -90,7 +93,7 @@ async def unban(ctx,*,member):
 @commands.has_permissions(kick_members=True)
 async def mute(ctx,member : discord.Member):
 	# add id here
-	muted = ctx.guild.get_role() # To get the id type \@RoleName
+	muted = ctx.guild.get_role(muted_id) # To get the id type \@RoleName
 	await member.add_roles(muted)
 	await ctx.send(member.mention + " has been muted!")
 
@@ -99,7 +102,7 @@ async def mute(ctx,member : discord.Member):
 @commands.has_permissions(kick_members=True)
 async def unmute(ctx,member : discord.Member):
 	# add id here
-	muted = ctx.guild.get_role() # To get the id type \@RoleName
+	muted = ctx.guild.get_role(muted_id) # To get the id type \@RoleName
 	await member.remove_roles(muted)
 	await ctx.send(member.mention + " has been muted!")
 
@@ -116,5 +119,12 @@ async def show(ctx, member : discord.Member):
 	field.set_footer(icon_url = ctx.author.avatar_url, text = f"- {ctx.author.name}")
 	await ctx.send(embed = field)
 
-# add token
+@client.command()
+async def repeat(ctx, *,message):
+	if message.lower() == "i am stupid":
+		await ctx.send("ya i know")		
+	else:
+		await ctx.send(message)
+
+# add token 
 client.run(TOKEN)
